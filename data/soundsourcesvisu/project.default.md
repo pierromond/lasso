@@ -1,6 +1,6 @@
 # Sound Sources Visualization – Lorient
 
-This project presents an interactive 3D visualization of urban sound sources measured by a network of 52 sensors deployed in Lorient, France.
+This project presents an interactive 3D visualization of urban sound sources measured by a network of 52 sensors deployed in Lorient, France. The acoustic data originates from the **[ANR CENSE](https://anr.fr/Projet-ANR-17-CE22-0012)** project (Citizen ENgagement and Soundscape Evaluation), which deployed a long-term sensor network to study urban soundscapes.
 
 ## Overview
 
