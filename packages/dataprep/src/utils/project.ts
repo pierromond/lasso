@@ -14,7 +14,7 @@ import {
 } from "../types";
 import * as schema from "../json-schema.json";
 import * as fsu from "./files";
-import { outerBbox, readGeoJsonFile } from "./geojson";
+import { outerBbox, readGeoJsonFile, optimizeGeoJson } from "./geojson";
 import { readMarkdownFile } from "./markdown";
 import { getRandomHexColor } from "./color";
 import { SoundData, getSoundFile } from "./sound";
@@ -146,7 +146,9 @@ export async function exportProject(project: InternalProject, sourceFolder: stri
           return [key, source];
         } else {
           const filename = `${key}.geo.json`;
-          await fsu.writeFile(path.resolve(projectFolder, filename), source.data);
+          // Optimize GeoJSON: truncate coordinates to 6 decimals, simplify dense geometries
+          const optimizedData = optimizeGeoJson(source.data as GeoJSON);
+          await fsu.writeFile(path.resolve(projectFolder, filename), optimizedData);
           return [
             key,
             {

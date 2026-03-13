@@ -71,22 +71,62 @@ export const useLoadProject = (id?: string): { project: LoadedProject | null; lo
 
             const loadedProject: LoadedProject = {
               ...projectToLoad,
-              // load missing sources
-              sources: fromPairs(
-                await Promise.all(
-                  toPairs(projectToLoad.sources).map(async ([sourceId, source]) => {
-                    if ("data" in source && typeof source.data === "string") {
-                      // fetch source.data
-                      const r = await axios.get<FeatureCollection>(source.data, { responseType: "json" });
-                      if (r.status === 200) {
-                        return [sourceId, { ...source, data: r.data }];
-                      }
-                      throw new Error(`Loading sources data ${sourceId} raised a ${r.status} HTTP code`);
+              // load missing sources — prioritize sources used by the initial two maps
+              sources: await (async () => {
+                const initialMaps = projectToLoad.maps.slice(0, 2);
+                const initialSourceIds = new Set(
+                  initialMaps.flatMap((m) => m.layers.map((l) => ("source" in l ? (l.source as string) : ""))).filter(Boolean),
+                );
+
+                const sourceEntries = toPairs(projectToLoad.sources);
+                const prioritySources = sourceEntries.filter(([id]) => initialSourceIds.has(id));
+                const deferredSources = sourceEntries.filter(([id]) => !initialSourceIds.has(id));
+
+                const loadSource = async ([sourceId, source]: [string, typeof projectToLoad.sources[string]]) => {
+                  if ("data" in source && typeof source.data === "string") {
+                    const r = await axios.get<FeatureCollection>(source.data, { responseType: "json" });
+                    if (r.status === 200) {
+                      return [sourceId, { ...source, data: r.data }] as const;
                     }
-                    return [sourceId, source];
-                  }),
-                ),
-              ),
+                    throw new Error(`Loading sources data ${sourceId} raised a ${r.status} HTTP code`);
+                  }
+                  return [sourceId, source] as const;
+                };
+
+                // Load priority sources first (blocking)
+                const loaded = await Promise.all(prioritySources.map(loadSource));
+
+                // Load deferred sources in background (non-blocking)
+                if (deferredSources.length > 0) {
+                  Promise.all(deferredSources.map(loadSource)).then((deferred) => {
+                    setAppContext((prev) => {
+                      const existing = prev.data.loadedProject[projectToLoad.id];
+                      if (!existing) return prev;
+                      const mergedSources = { ...existing.sources, ...fromPairs(deferred.map(([k, v]) => [k, v])) };
+                      const updatedProject = { ...existing, sources: mergedSources };
+                      // rebuild featureIndex
+                      updatedProject.featureIndex = Object.keys(mergedSources)
+                        .map((sourceName) => mergedSources[sourceName])
+                        .flatMap((source) => {
+                          if (source.type === "geojson" && source.data && (source.data as FeatureCollection).type === "FeatureCollection") {
+                            return (source.data as FeatureCollection).features;
+                          }
+                          return [] as Array<Feature>;
+                        })
+                        .reduce((acc, curr: Feature) => ({ ...acc, [`${curr.id}`]: curr }), {});
+                      return {
+                        ...prev,
+                        data: {
+                          ...prev.data,
+                          loadedProject: { ...prev.data.loadedProject, [projectToLoad.id]: updatedProject },
+                        },
+                      };
+                    });
+                  });
+                }
+
+                return fromPairs(loaded.map(([k, v]) => [k, v]));
+              })(),
               // load basemap
               maps: await Promise.all(
                 projectToLoad.maps.map(async (m) => {
