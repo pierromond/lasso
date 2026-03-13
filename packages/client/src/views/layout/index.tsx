@@ -39,7 +39,7 @@ export const Layout: FC<PropsWithChildren<LayoutProps>> = ({
         <Heading project={project} currentProjectPage={currentProjectPage} />
       </Header>
 
-      <main className={cx(fullPage === true ? "d-flex align-self-stretch" : "container py-3")}>
+      <main className={cx(fullPage === true ? "d-flex flex-column flex-grow-1" : "container py-3")}>
         {!fullPage && <Heading heading={heading} />}
         {children}
       </main>

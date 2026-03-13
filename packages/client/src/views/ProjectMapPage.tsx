@@ -26,7 +26,8 @@ export const ProjectMapPage: FC = () => {
           <iframe
             src={project.externalUrl}
             title={typeof project.name === "string" ? project.name : getI18NText(locale, project.name)}
-            style={{ width: "100%", height: "100%", border: "none" }}
+            className="flex-grow-1"
+            style={{ width: "100%", border: "none", minHeight: 0 }}
             allow="fullscreen"
           />
         ) : (

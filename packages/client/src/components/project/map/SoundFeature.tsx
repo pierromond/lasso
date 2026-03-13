@@ -86,7 +86,7 @@ export const SoundFeature: FC<{ feature?: Feature; mapId: string; currentTimeKey
         }, 200);
       }
     };
-  }, [feature, currentTimeKey, project.lassoVariables, muted]);
+  }, [feature, currentTimeKey, project.lassoVariables, muted, timeKey]);
 
   return null;
 };
