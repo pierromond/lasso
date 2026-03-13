@@ -22,7 +22,16 @@ export const ProjectMapPage: FC = () => {
         fullPage={true}
         currentProjectPage={"maps"}
       >
-        {project && <ProjectMaps />}
+        {project && project.externalUrl ? (
+          <iframe
+            src={project.externalUrl}
+            title={typeof project.name === "string" ? project.name : getI18NText(locale, project.name)}
+            style={{ width: "100%", height: "100%", border: "none" }}
+            allow="fullscreen"
+          />
+        ) : (
+          project && <ProjectMaps />
+        )}
       </Layout>
       {!loading && !project && <NotFoundPage />}
     </>

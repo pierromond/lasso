@@ -1,0 +1,15 @@
+{
+  "id": "soundsourcesvisu",
+  "name": {
+    "en": "Sound Sources Visualization – Lorient",
+    "fr": "Visualisation des Sources Sonores – Lorient"
+  },
+  "description": {
+    "en": "Interactive 3D visualization of sound sources in Lorient, France. Explore traffic, voices, and bird sounds before, during, and after COVID-19 lockdown using deck.gl data vases and rose diagrams.",
+    "fr": "Visualisation interactive 3D des sources sonores à Lorient, France. Explorez le trafic, les voix et les oiseaux avant, pendant et après le confinement COVID-19 grâce aux vases de données et diagrammes en rosaces deck.gl."
+  },
+  "bbox": [[-3.38, 47.74], [-3.34, 47.77]],
+  "externalUrl": "https://modantailleur.github.io/soundSourcesVisu/",
+  "sources": {},
+  "maps": []
+}

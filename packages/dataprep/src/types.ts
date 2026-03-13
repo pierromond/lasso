@@ -161,6 +161,11 @@ interface IProject {
    */
   bbox?: BBOX;
   /**
+   * URL of an external application to embed in an iframe.
+   * When set, the project will render the external app instead of the normal map view.
+   */
+  externalUrl?: string;
+  /**
    * List of layer that can be used on maps
    * A layer can be a tiles URL or a path to a geojson
    */

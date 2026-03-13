@@ -12920,23 +12920,23 @@
         },
         "Promise<FontFaceSet>": {
             "properties": {
-                "__@toStringTag@8987": {
+                "__@toStringTag@8988": {
                     "type": "string"
                 }
             },
             "required": [
-                "__@toStringTag@8987"
+                "__@toStringTag@8988"
             ],
             "type": "object"
         },
         "Promise<ServiceWorkerRegistration>": {
             "properties": {
-                "__@toStringTag@8987": {
+                "__@toStringTag@8988": {
                     "type": "string"
                 }
             },
             "required": [
-                "__@toStringTag@8987"
+                "__@toStringTag@8988"
             ],
             "type": "object"
         },
@@ -20759,6 +20759,10 @@
         "description": {
             "$ref": "#/definitions/StringI18n",
             "description": "A short description of the project in text only.\nWill be used for the project's card."
+        },
+        "externalUrl": {
+            "description": "URL of an external application to embed in an iframe.\nWhen set, the project will render the external app instead of the normal map view.",
+            "type": "string"
         },
         "id": {
             "description": "Unique identifier of the project acroos all projects.",

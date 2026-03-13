@@ -7,3 +7,4 @@ coverage
 *.swp
 packages/client/public/data
 .vscode/
+soundSourcesVisu-main/
