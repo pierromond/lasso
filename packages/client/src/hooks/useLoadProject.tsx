@@ -190,9 +190,23 @@ export const useLoadProject = (id?: string): { project: LoadedProject | null; lo
       .then((project) => {
         if (!project) throw Error("Project not found");
         setAppContext((prev) => {
+          // Skip map setup for external projects (no maps)
+          if (project.externalUrl || project.maps.length === 0) {
+            return {
+              ...prev,
+              current: {
+                data: project,
+                bbox: project.bbox,
+                lassoVariables: getProjectVariables(project),
+                maps: {},
+              },
+            };
+          }
+
           const maps = ["right", "left"]
             .map((mapId, index) => {
               const map = project.maps[index];
+              if (!map) return null;
               return {
                 id: mapId,
                 content: {
@@ -203,6 +217,7 @@ export const useLoadProject = (id?: string): { project: LoadedProject | null; lo
                 },
               };
             })
+            .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
             .reduce((acc, curr) => ({ ...acc, [curr.id]: curr.content }), {});
 
           return {
