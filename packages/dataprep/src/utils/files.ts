@@ -10,9 +10,12 @@ import papa from "papaparse";
  * If the folder already exist, do nothing.
  */
 export async function checkExists(fileOrFolderPath: string): Promise<boolean> {
-  return new Promise<boolean>((resolve) => {
-    fs.exists(path.resolve(fileOrFolderPath), (exist) => resolve(exist));
-  });
+  try {
+    await fsp.access(path.resolve(fileOrFolderPath));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -21,7 +24,7 @@ export async function checkExists(fileOrFolderPath: string): Promise<boolean> {
  */
 export async function createFolder(folder: string): Promise<void> {
   const folderPath = path.resolve(folder);
-  if (!(await checkExists(folderPath))) await fs.mkdirSync(folderPath, { recursive: true });
+  if (!(await checkExists(folderPath))) await fsp.mkdir(folderPath, { recursive: true });
 }
 
 /**
@@ -132,7 +135,8 @@ export async function readCsv<T>(file: string, delimiter = ","): Promise<Array<T
 }
 
 export async function copy(source: string, target: string): Promise<void> {
-  if (fs.lstatSync(source).isDirectory()) await fsp.cp(source, target, { recursive: true });
+  const stat = await fsp.lstat(source);
+  if (stat.isDirectory()) await fsp.cp(source, target, { recursive: true });
   else await fsp.copyFile(source, target);
 }
 

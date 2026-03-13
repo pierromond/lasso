@@ -6,7 +6,9 @@ export function displayStringDateTime(value: string, options?: { time: boolean }
         dateStyle: "short",
         timeStyle: options?.time === false ? undefined : "short",
       }).format(date);
-  } catch (_e) {}
+  } catch (e) {
+    console.warn(`Failed to parse date: "${value}"`, e);
+  }
   return undefined;
 }
 

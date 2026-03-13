@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren } from "react";
 import cx from "classnames";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { isString } from "lodash";
 import { useLocale } from "@transifex/react";
 

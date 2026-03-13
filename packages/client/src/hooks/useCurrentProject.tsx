@@ -181,7 +181,7 @@ export const useCurrentProject = () => {
           const selectedData = (selectParam || "").split("|");
           if (selectedData.length === 2 && context.current?.data.featureIndex[selectedData[0]]) {
             const feature = context.current?.data.featureIndex[selectedData[0]];
-            const coord = center(feature as any).geometry.coordinates;
+            const coord = center(feature as Parameters<typeof center>[0]).geometry.coordinates;
             setProjectMapSelection(mapId, {
               feature,
               source: selectedData[1],

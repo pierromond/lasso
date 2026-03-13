@@ -1,5 +1,5 @@
 import { head, isString, toPairs } from "lodash";
-import { Geometry, Feature } from "geojson";
+import { Geometry, Feature, FeatureCollection } from "geojson";
 
 import { Project, IProjectMap, LayerVariable, SOUNDSCAPE_VARIABLES_TYPES, TimeSpecification } from "@lasso/dataprep";
 import { LoadedProject } from "../hooks/useLoadProject";
@@ -26,32 +26,33 @@ export function getProjectVariables(
     .flatMap((source) => {
       return toPairs(source[1].variables || {}).map((e) => [
         ...e,
-        source[1].type === "geojson" ? (source[1].data as any).features[0] : undefined,
+        source[1].type === "geojson" ? (source[1].data as FeatureCollection).features[0] : undefined,
       ]);
     })
-    .reduce((acc, curr) => {
+    .reduce<{ [key: string]: ProjectLayerVariable }>((acc, curr) => {
+      const varName = curr[0] as string;
       if (isString(curr[1])) {
         return {
           ...acc,
-          [curr[0]]: {
-            variable: curr[0] as SOUNDSCAPE_VARIABLES_TYPES,
-            propertyName: curr[1],
+          [varName]: {
+            variable: varName as SOUNDSCAPE_VARIABLES_TYPES,
+            propertyName: curr[1] as string,
             minimumValue: 0,
             maximumValue: 10,
-            featureExample: curr[2],
+            featureExample: curr[2] as Feature | undefined,
           },
         };
       } else {
         return {
           ...acc,
-          [curr[0]]: {
-            variable: curr[0] as SOUNDSCAPE_VARIABLES_TYPES,
-            featureExample: curr[2] as Feature,
-            ...curr[1],
+          [varName]: {
+            variable: varName as SOUNDSCAPE_VARIABLES_TYPES,
+            featureExample: curr[2] as Feature | undefined,
+            ...(curr[1] as LayerVariable),
           },
         };
       }
-    }, {} as { [key: string]: ProjectLayerVariable });
+    }, {});
 }
 
 export function getMapProjectVariable(project: LoadedProject, map: IProjectMap): ProjectLayerVariable | null {
@@ -69,7 +70,7 @@ export function getMapProjectVariable(project: LoadedProject, map: IProjectMap):
             propertyName: isString(variable) ? variable : variable.propertyName,
             minimumValue: isString(variable) ? 0 : variable.minimumValue,
             maximumValue: isString(variable) ? 10 : variable.maximumValue,
-            featureExample: (source.data as any).features[0],
+            featureExample: (source.data as FeatureCollection).features[0],
           };
         }
       }

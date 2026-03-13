@@ -63,4 +63,7 @@ run()
     console.log(`Success !`);
     console.log(`Files have been generated in ${config.exportPath}`);
   })
-  .catch((e) => console.log("Error", e));
+  .catch((e) => {
+    console.error("Error", e);
+    process.exit(1);
+  });

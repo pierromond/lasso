@@ -1,12 +1,10 @@
-FROM debian:stable-slim
+FROM node:18-slim
 
 ARG USER_ID
 ARG GROUP_ID
 
-# Installing node & npm
-RUN apt-get update && apt-get -y install npm curl nginx sudo
-RUN npm install -g n
-RUN n 18
+# Installing nginx
+RUN apt-get update && apt-get -y install nginx sudo
 RUN mkdir /var/www/public
 
 # Create user / group

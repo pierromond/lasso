@@ -109,7 +109,7 @@ export const useLoadProject = (id?: string): { project: LoadedProject | null; lo
             loadedProject.featureIndex = Object.keys(loadedProject.sources)
               .map((sourceName) => loadedProject.sources[sourceName])
               .flatMap((source) => {
-                if (source.type === "geojson" && source.data && (source.data as any).type === "FeatureCollection") {
+                if (source.type === "geojson" && source.data && (source.data as FeatureCollection).type === "FeatureCollection") {
                   return (source.data as FeatureCollection).features;
                 }
                 return [] as Array<Feature>;
@@ -182,7 +182,7 @@ export const useLoadProject = (id?: string): { project: LoadedProject | null; lo
           current: undefined,
         }));
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: loadProject depends on context.data which would cause infinite re-renders
   }, [id, setAppContext, loadProject]);
 
   const project = useMemo(

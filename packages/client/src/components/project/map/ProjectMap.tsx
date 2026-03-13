@@ -51,7 +51,7 @@ export const ProjectMap: FC<ProjectMapProps> = ({ mapId }) => {
         map.fitBounds(project.bbox);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: only fit bounds on initial map load, not on project/searchParam changes
   }, [map, mapId, mapLoaded]);
 
   // interactive layer (on which we can click)
